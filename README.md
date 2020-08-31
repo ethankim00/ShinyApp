@@ -6,4 +6,4 @@ Foods can be chosen for breakfast, lunch and dinner. The barchart shows the freq
 Kimchi was only served on one day of the week
 ![Kimchi](https://github.com/ethankim00/ShinyApp/blob/master/kimchi.png?raw=true)
 Salmon was served on several different days
-![Salmon](https://github.com/ethankim00/CovidDrugDiscovery/blob/master/salmon.png?raw=true)
+![Salmon](https://github.com/ethankim00/ShinyApp/blob/master/salmon.png?raw=true)
