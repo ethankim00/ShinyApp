@@ -1,0 +1,158 @@
+---
+title: "HOPD-HUDS-Data"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gsheet)
+library(reshape)
+library(ggplot2)
+```
+```{r}
+hudsdata<-gsheet2tbl('https://docs.google.com/spreadsheets/d/1S3vFDul1PeB84Zd8G5ewe1ocZ6ezidQzAp5gn1eiHtQ/edit#gid=0')
+hudsdata = data.frame(hudsdata)
+
+hudsdata$Weekday = weekdays(as.Date(hudsdata$Date, '%m-%d-%Y'))
+
+breakfast = subset(hudsdata, hudsdata$Meal == "Breakfast")
+lunch = subset(hudsdata, hudsdata$Meal == "Lunch")
+dinner = subset(hudsdata, hudsdata$Meal == "Dinner")
+breakfast.meals = unique(breakfast$Food)
+
+
+```
+
+
+```{r}
+install.packages('tidyverse')
+```
+
+```{r}
+library(ggplot2)
+# Pull from google sheet
+hudsdata<-gsheet2tbl('https://docs.google.com/spreadsheets/d/1S3vFDul1PeB84Zd8G5ewe1ocZ6ezidQzAp5gn1eiHtQ/edit#gid=0')
+hudsdata = data.frame(hudsdata)
+```
+
+
+```{r}
+hudsdata$Weekday = weekdays(as.Date(hudsdata$Date, '%m-%d-%Y'))
+
+```
+
+```{r}
+breakfast = subset(hudsdata, hudsdata$Meal == "Breakfast")
+lunch = subset(hudsdata, hudsdata$Meal == "Lunch")
+dinner = subset(hudsdata, hudsdata$Meal == "Dinner")
+```
+
+
+```{r}
+breakfast.meals = unique(breakfast$Food)
+breakfast.byweekday= matrix(nrow = 7, ncol = length(breakfast.meals))
+weekdays1 = c('Monday',"Tuesday", "Wednesday", "Thursday", "Friday",    "Saturday" , "Sunday" )
+for (i in 1:length(breakfast.meals)){
+  for (j in 1:length(weekdays1)){
+   g = subset(breakfast, breakfast$Weekday == weekdays1[j])
+   h = subset(g, g$Food == breakfast.meals[i] )
+  breakfast.byweekday[j,i] = length(h$Food)
+}
+}
+df.breakfast = as.data.frame(breakfast.byweekday)
+colnames(df.breakfast) <- breakfast.meals
+rownames(df.breakfast) <- weekdays1
+weekdays.shortened = c("Mon",    "Tue" ,  "Wed", "Thu" , "Fri" ,   "Sat"  ,"Sun")
+
+
+food_index = which(colnames(df.breakfast) == "Blueberries")
+
+
+df.breakfast[,food_index]
+barplot(df.breakfast[,7], names = weekdays.shortened, ylab = 'Freqency', xlab = 'Blueberries', col = heat.colors(7, alpha = 0.5))
+
+```
+
+
+```{r}
+breakfast.meals
+```
+
+```{r}
+hudsdata$Food[1]
+```
+
+```{r}
+lunch.meals = unique(lunch$Food)
+lunch.byweekday= matrix(nrow = 7, ncol = length(lunch.meals))
+weekdays1 = c('Monday',"Tuesday", "Wednesday", "Thursday", "Friday",    "Saturday" , "Sunday" )
+for (k in 1:length(lunch.meals)){
+  for (l in 1:length(weekdays1)){
+   d = subset(lunch, lunch$Weekday == weekdays1[j])
+   e = subset(d, d$Food == lunch.meals[i])
+   lunch.byweekday[l,k] = length(e$Food)
+}
+}
+
+
+```
+
+
+```{r}
+dinner.meals = unique(dinner$Food)
+dinner.byweekday= matrix(nrow = 7, ncol = length(dinner.meals))
+weekdays1 = c('Monday',"Tuesday", "Wednesday", "Thursday", "Friday",    "Saturday" , "Sunday" )
+for (i in 1:length(dinner.meals)){
+  for (j in 1:length(weekdays1)){
+   g = subset(dinner, dinner$Weekday == weekdays1[j])
+   h = subset(g, g$Food == dinner.meals[i] )
+  dinner.byweekday[j,i] = length(h$Food)
+}
+}
+max(dinner.byweekday)
+difference = vector('numeric')
+for (i in 1:length(dinner.meals)){
+  difference[i] = max(dinner.byweekday[,i]) - min(dinner.byweekday[,i])
+  
+}
+weekdays.shortened = c("Mon",    "Tue" ,  "Wed", "Thu" , "Fri" ,   "Sat"  ,"Sun")
+top.meals = which(difference>6)
+colfunc <- colorRampPalette(c("blue", "green"))
+#for(i in 1:length(top.meals)){
+ # barplot(dinner.byweekday[,top.meals[i]], names = weekdays.shortened, main = dinner.meals[top.meals[i]], col = colfunc(7))
+#}
+
+```
+
+
+```{r}
+lunch.meals = unique(lunch$Food)
+dimnames1 <- list(Weekday=weekdays1, name=c(lunch.meals))
+lunch.byweekday= matrix(nrow = 7, ncol = length(lunch.meals), dimnames = dimnames1)
+weekdays1 = c('Monday',"Tuesday", "Wednesday", "Thursday", "Friday",    "Saturday" , "Sunday" )
+for (i in 1:length(lunch.meals)){
+  for (j in 1:length(weekdays1)){
+   g = subset(lunch, lunch$Weekday == weekdays1[j])
+   h = subset(g, g$Food == lunch.meals[i] )
+  lunch.byweekday[j,i] = length(h$Food)
+}
+}
+
+difference = vector('numeric')
+for (i in 1:length(lunch.meals)){
+  difference[i] = max(lunch.byweekday[,i]) - min(lunch.byweekday[,i])
+  
+}
+weekdays.shortened = c("Mon",    "Tue" ,  "Wed", "Thu" , "Fri" ,   "Sat"  ,"Sun")
+top.meals = which(difference>4)
+colfunc <- colorRampPalette(c("blue", "red"))
+for(i in 1:length(top.meals)){
+  barplot(lunch.byweekday[,top.meals[i]], names = weekdays.shortened, main = lunch.meals[top.meals[i]], col = colfunc(7), ylab = 'Freqency')
+}
+```
+
+
+
+```
+
